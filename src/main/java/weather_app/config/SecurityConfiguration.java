@@ -42,7 +42,7 @@ public class SecurityConfiguration {
 	@Bean
 	protected SecurityFilterChain filterChain( HttpSecurity http ) throws Exception {
 		
-		http.csrf().disable()
+		http.cors().and().csrf().disable()
 			.authorizeRequests()
 			.antMatchers("/authenticate").permitAll()	// let anyone try to create a token
 			.antMatchers("/api/hello").hasRole("USER")
@@ -75,7 +75,6 @@ public class SecurityConfiguration {
 		// there's many options for password encoding, use the algorithm you like or are asked
 		// to use by your company
 		return new BCryptPasswordEncoder();
-		
 	}
 	
 	// load the encoder & user details service that are needed for spring security to do authentication

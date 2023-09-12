@@ -24,16 +24,13 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	@NotBlank
 	private String username;
 	
 	@Column(nullable = false)
 	@NotBlank
 	private String password;
-	
-	@Column(nullable = false)
-	private String fullName;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -46,12 +43,11 @@ public class User implements Serializable {
 		super();
 	}
 
-	public User(Integer id, String username, String password, String fullName, Role role, boolean enabled) {
+	public User(Integer id, String username, String password, Role role, boolean enabled) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.password = password;
-		this.fullName = fullName;
 		this.role = role;
 		this.enabled = enabled;
 	}
@@ -80,14 +76,6 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
-
 	public Role getRole() {
 		return role;
 	}
@@ -106,7 +94,7 @@ public class User implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", password=" + password + ", fullName=" + fullName
-				+ ", role=" + role + ", enabled=" + enabled + "]";
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + ", enabled="
+				+ enabled + "]";
 	}
 }
