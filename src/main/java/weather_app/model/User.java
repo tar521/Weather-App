@@ -1,7 +1,9 @@
 package weather_app.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,7 +11,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
 public class User implements Serializable {
@@ -38,20 +44,26 @@ public class User implements Serializable {
 	
 	@Column(columnDefinition = "boolean default true")
 	private boolean enabled; // true/false if user enabled/disabled
+	
+	@JsonProperty(access = Access.WRITE_ONLY)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<SavedLocation> savedLocation;
 
 	public User() {
 		super();
 	}
 
-	public User(Integer id, String username, String password, Role role, boolean enabled) {
+	public User(Integer id, @NotBlank String username, @NotBlank String password, Role role, boolean enabled,
+			List<SavedLocation> savedLocation) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.role = role;
 		this.enabled = enabled;
+		this.savedLocation = savedLocation;
 	}
-
+	
 	public Integer getId() {
 		return id;
 	}
@@ -92,9 +104,17 @@ public class User implements Serializable {
 		this.enabled = enabled;
 	}
 
+	public List<SavedLocation> getSavedLocation() {
+		return savedLocation;
+	}
+
+	public void setSavedLocation(List<SavedLocation> savedLocation) {
+		this.savedLocation = savedLocation;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + ", enabled="
-				+ enabled + "]";
+				+ enabled + ", savedLocation=" + savedLocation + "]";
 	}
 }
