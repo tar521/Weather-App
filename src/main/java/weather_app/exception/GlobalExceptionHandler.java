@@ -14,12 +14,23 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND) // will add documentation for 404 error we get when exception is thrown
-	public ResponseEntity<?> resourceNotFount(ResourceNotFoundException ex, WebRequest request) {
+	public ResponseEntity<?> resourceNotFound(ResourceNotFoundException ex, WebRequest request) {
 		
 		// what data be returned back in response when exception thrown
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
 		
 		// constructing the response
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(UsernameTakenException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<?> usernameTaken(UsernameTakenException ex, WebRequest request) {
+		
+		// what data be returned back in response when exception thrown
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
+				
+		// constructing the response
+		return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
 	}
 }

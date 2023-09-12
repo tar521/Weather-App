@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import weather_app.exception.ResourceNotFoundException;
+import weather_app.exception.UsernameTakenException;
 import weather_app.model.User;
 import weather_app.service.UserService;
 
@@ -39,7 +40,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/user")
-	public ResponseEntity<User> createUser(@RequestBody User user) {
+	public ResponseEntity<User> createUser(@RequestBody User user) throws UsernameTakenException {
 		
 		User created = service.createUser(user);
 		

@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import weather_app.exception.ResourceNotFoundException;
+import weather_app.exception.UsernameTakenException;
 import weather_app.model.User;
 import weather_app.repository.UserRepository;
 
@@ -35,7 +36,12 @@ public class UserService {
 		return found.get();
 	}
 	
-	public User createUser(User user) {
+	public User createUser(User user) throws UsernameTakenException {
+		
+		Optional<User> exists = repo.findByUsername(user.getUsername());
+		if (!exists.isEmpty()) {
+			throw new UsernameTakenException(user);
+		}
 		
 		user.setId(null);
 		user.setPassword(encoder.encode(user.getPassword()));
