@@ -1,84 +1,97 @@
 package weather_app.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import weather_app.exception.ResourceNotFoundException;
 import weather_app.model.User;
 import weather_app.repository.UserRepository;
 
-@WebMvcTest(UserService.class)
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTests {
-
-	private static final String STARTING_URI = "http://localhost:8080";
 	
-	@MockBean
+	@Mock
 	private UserRepository repo;
 	
-	@Autowired
-	private MockMvc mvc;
+	@Mock
+	private PasswordEncoder encoder;
+	
+	@InjectMocks
+	private UserService service;
 	
 	@Test
-	public void testGetUsersSuccess() throws Exception {
-		
-		String uri = STARTING_URI + "/user";
+	public void testGetAllUsersSuccess() throws Exception {
 		
 		List<User> users = new ArrayList<>();
 		
-		users.add(new User(null, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
-		users.add(new User(null, "Conner", "pw123", User.Role.ROLE_USER, true, null));
-		
 		when(repo.findAll()).thenReturn(users);
 		
-		mvc.perform(get(uri)
-			.with(SecurityMockMvcRequestPostProcessors.jwt()))
-			.andDo(print())
-			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-			.andExpect(jsonPath("$.length()").value(users.size()))
-			.andExpect(jsonPath("$[0].id").value(users.get(0).getId()))
-			.andExpect(jsonPath("$[0].username").value(users.get(0).getUsername()))
-			.andExpect(jsonPath("$[0].password").value(users.get(0).getPassword()))
-			.andExpect(jsonPath("$[0].enabled").value(users.get(0).isEnabled()))
-			.andExpect(jsonPath("$[1].id").value(users.get(1).getId()))
-			.andExpect(jsonPath("$[1].username").value(users.get(1).getUsername()))
-			.andExpect(jsonPath("$[1].password").value(users.get(1).getPassword()))
-			.andExpect(jsonPath("$[1].enabled").value(users.get(1).isEnabled()));
+		List<User> result = service.getAllUsers();
+		
+		assertEquals(users, result);
 		
 		verify(repo, times(1)).findAll();
 		verifyNoMoreInteractions(repo);
 	}
 	
 	@Test
-	public void testGetUserSuccess() {
+	public void testGetUserSuccess() throws Exception {
 		
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		
+		when(repo.findById(user.get().getId())).thenReturn(user);
+		
+		User result = service.getUserById(user.get().getId());
+		
+		assertEquals(user.get(), result);
+		
+		verify(repo, times(1)).findById(user.get().getId());
+		verifyNoMoreInteractions(repo);
 	}
 	
 	@Test
 	public void testGetUserResourceNotFound() {
 		
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		
+		when(repo.findById(user.get().getId())).thenThrow(new ResourceNotFoundException("User", user.get().getId()));
+		
+		assertThrows(ResourceNotFoundException.class, () -> service.getUserById(user.get().getId()));
 	}
 	
 	@Test
-	public void testCreateUserSuccess() {
+	public void testCreateUserSuccess() throws Exception {
 		
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		
+		when(repo.findByUsername(user.get().getUsername())).thenReturn(Optional.empty());
+		when(repo.save(user.get())).thenReturn(user.get());
+		when(encoder.encode(user.get().getPassword())).thenReturn(user.get().getPassword());
+		
+		User result = service.createUser(user.get());
+		
+		assertEquals(user.get(), result);
+		
+		verify(repo, times(1)).findByUsername(user.get().getUsername());
+		verify(encoder, times(1)).encode(user.get().getPassword());
+		verifyNoMoreInteractions(encoder);
+		verify(repo, times(1)).save(user.get());
+		verifyNoMoreInteractions(repo);
 	}
 	
 	@Test

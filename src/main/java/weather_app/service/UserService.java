@@ -50,6 +50,7 @@ public class UserService {
 	public User createUser(User user) throws UsernameTakenException {
 		
 		Optional<User> exists = repo.findByUsername(user.getUsername());
+		
 		if (!exists.isEmpty()) {
 			throw new UsernameTakenException(user);
 		}
