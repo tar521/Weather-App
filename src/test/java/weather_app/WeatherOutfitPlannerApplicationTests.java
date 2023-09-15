@@ -1,10 +1,10 @@
-package com.example.demo;
+package weather_app;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class WeatherOutfitPlannerApplicationTests {
+class CapstoneProjectApplicationTests {
 
 	@Test
 	void contextLoads() {
