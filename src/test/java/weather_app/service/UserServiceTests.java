@@ -2,6 +2,7 @@ package weather_app.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -19,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import weather_app.exception.ResourceNotFoundException;
+import weather_app.exception.UsernameTakenException;
 import weather_app.model.User;
 import weather_app.repository.UserRepository;
 
@@ -50,7 +52,7 @@ public class UserServiceTests {
 	}
 	
 	@Test
-	public void testGetUserSuccess() throws Exception {
+	public void testGetUserByIdSuccess() throws Exception {
 		
 		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
 		
@@ -65,13 +67,38 @@ public class UserServiceTests {
 	}
 	
 	@Test
-	public void testGetUserResourceNotFound() {
+	public void testGetUserByIdResourceNotFound() {
 		
 		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
 		
-		when(repo.findById(user.get().getId())).thenThrow(new ResourceNotFoundException("User", user.get().getId()));
+		when(repo.findById(user.get().getId())).thenReturn(Optional.empty());
 		
 		assertThrows(ResourceNotFoundException.class, () -> service.getUserById(user.get().getId()));
+	}
+	
+	@Test
+	public void testGetUserByUsernameSucess() throws Exception {
+		
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		
+		when(repo.findByUsername(user.get().getUsername())).thenReturn(user);
+		
+		User result = service.getUserByUsername(user.get().getUsername());
+		
+		assertEquals(user.get(), result);
+		
+		verify(repo, times(1)).findByUsername(user.get().getUsername());
+		verifyNoMoreInteractions(repo);
+	}
+	
+	@Test
+	public void testGetUserByUsernameResourceNotFound() {
+		
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		
+		when(repo.findByUsername(user.get().getUsername())).thenReturn(Optional.empty());
+		
+		assertThrows(ResourceNotFoundException.class, () -> service.getUserByUsername(user.get().getUsername()));
 	}
 	
 	@Test
@@ -95,27 +122,67 @@ public class UserServiceTests {
 	}
 	
 	@Test
-	public void testCreateUserResourceNotFound() {
+	public void testCreateUserUsernameTaken() {
 		
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		
+		when(repo.findByUsername(user.get().getUsername())).thenReturn(user);
+		
+		assertThrows(UsernameTakenException.class, () -> service.createUser(user.get()));
 	}
 	
 	@Test
-	public void updateUserSuccess() {
+	public void updateUserSuccess() throws Exception {
 		
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		Optional<User> updated = Optional.of(new User(1, "Conner", "pw123", User.Role.ROLE_USER, true, null));
+		
+		when(repo.existsById(user.get().getId())).thenReturn(true);
+		when(repo.save(updated.get())).thenReturn(updated.get());
+		
+		User result = service.updateUser(updated.get());
+		
+		assertEquals(updated.get(), result);
+		
+		verify(repo, times(1)).existsById(user.get().getId());
+		verify(repo, times(1)).save(updated.get());
+		verifyNoMoreInteractions(repo);
 	}
 	
 	@Test
 	public void updateUserResourceNotFound() {
 		
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		
+		when(repo.existsById(user.get().getId())).thenReturn(false);
+		
+		assertThrows(ResourceNotFoundException.class, () -> service.updateUser(user.get()));
 	}
 	
 	@Test
-	public void deleteUserSuccess() {
+	public void deleteUserSuccess() throws Exception {
 		
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		
+		when(repo.findById(user.get().getId())).thenReturn(user);
+		doNothing().when(repo).deleteById(user.get().getId());
+		
+		User result = service.deleteUser(user.get().getId());
+		
+		assertEquals(user.get(), result);
+		
+		verify(repo, times(1)).findById(user.get().getId());
+		verify(repo, times(1)).deleteById(user.get().getId());
+		verifyNoMoreInteractions(repo);
 	}
 	
 	@Test
 	public void deleteUserResourceNotFound() {
 		
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		
+		when(repo.findById(user.get().getId())).thenReturn(Optional.empty());
+		
+		assertThrows(ResourceNotFoundException.class, () -> service.deleteUser(user.get().getId()));
 	}
 }
