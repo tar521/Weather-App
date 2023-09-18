@@ -117,4 +117,12 @@ public class User implements Serializable {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + ", enabled="
 				+ enabled + ", savedLocation=" + savedLocation + "]";
 	}
+
+	public String toJson() {
+		return "{\"id\" : " + id
+				+ ", \"username\" : \"" + username + "\""
+				+ ", \"password\" : \"" + password + "\""
+				+ ", \"role\" : \"" + role + "\""
+				+ ", \"enabled\" : \"" + enabled + "\"}";
+	}
 }
