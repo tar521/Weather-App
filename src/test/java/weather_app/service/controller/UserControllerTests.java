@@ -4,8 +4,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -14,8 +16,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,6 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import weather_app.controller.UserController;
 import weather_app.exception.ResourceNotFoundException;
+import weather_app.exception.UsernameTakenException;
 import weather_app.model.User;
 import weather_app.service.MyUserDetailsService;
 import weather_app.service.UserService;
@@ -126,51 +131,140 @@ public class UserControllerTests {
 	@Test
 	public void testCreateUserSuccess() throws Exception {
 		
-//		String uri = STARTING_URI + "/user";
-//		
-//		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
-//		
-//		when(service.createUser(user)).thenReturn(user);
-//		
-//		mvc.perform(post(uri)
-//			.content(user.toJson())
-//			.contentType(MediaType.APPLICATION_JSON_VALUE)
-//			.with(SecurityMockMvcRequestPostProcessors.jwt()))
-//			.andDo(print())
-//			.andExpect(status().isOk())
-//			.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-//			.andExpect(jsonPath("$.id").value(user.getId()))
-//			.andExpect(jsonPath("$.username").value(user.getUsername()))
-//			.andExpect(jsonPath("$.password").value(user.getPassword()))
-//			//.andExpect(jsonPath("$.role").value(user.getRole()))
-//			.andExpect(jsonPath("$.enabled").value(user.isEnabled()));
-//		
-//		verify(service, times(1)).createUser(user);
-//		verifyNoMoreInteractions(service);
+		String uri = STARTING_URI + "/user";
+		
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		
+		when(service.createUser(Mockito.any(User.class))).thenReturn(user);
+		
+		mvc.perform(post(uri)
+			.content(user.toJson())
+			.contentType(MediaType.APPLICATION_JSON_VALUE)
+			.with(SecurityMockMvcRequestPostProcessors.jwt()))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+			.andExpect(jsonPath("$.id").value(user.getId()))
+			.andExpect(jsonPath("$.username").value(user.getUsername()))
+			.andExpect(jsonPath("$.password").value(user.getPassword()))
+			//.andExpect(jsonPath("$.role").value(user.getRole()))
+			.andExpect(jsonPath("$.enabled").value(user.isEnabled()));
+		
+		verify(service, times(1)).createUser(Mockito.any(User.class));
+		verifyNoMoreInteractions(service);
 	}
 	
 	@Test
-	public void testCreateUserResourceNotFound() {
+	public void testCreateUserResourceNotFound() throws Exception {
+		
+		String uri = STARTING_URI + "/user";
+		
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		
+		when(service.createUser(Mockito.any(User.class))).thenThrow(new UsernameTakenException(user));
+		
+		mvc.perform(post(uri)
+			.content(user.toJson())
+			.contentType(MediaType.APPLICATION_JSON_VALUE)
+			.with(SecurityMockMvcRequestPostProcessors.jwt()))
+			.andDo(print())
+			.andExpect(status().isBadRequest());
+		
+		verify(service, times(1)).createUser(Mockito.any(User.class));
+		verifyNoMoreInteractions(service);
+	}
+	
+	@Test
+	public void updateUserSuccess() throws Exception {
+		
+		String uri = STARTING_URI + "/user";
+		
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		User updated = new User(1, "Conner", "pw123", User.Role.ROLE_USER, true, null);
+		
+		when(service.updateUser(Mockito.any(User.class))).thenReturn(updated);
+		
+		mvc.perform(put(uri)
+			.content(user.toJson())
+			.contentType(MediaType.APPLICATION_JSON_VALUE)
+			.with(SecurityMockMvcRequestPostProcessors.jwt()))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+			.andExpect(jsonPath("$.id").value(updated.getId()))
+			.andExpect(jsonPath("$.username").value(updated.getUsername()))
+			.andExpect(jsonPath("$.password").value(updated.getPassword()))
+			//.andExpect(jsonPath("$.role").value(user.getRole()))
+			.andExpect(jsonPath("$.enabled").value(updated.isEnabled()));
+		
+		verify(service, times(1)).updateUser(Mockito.any(User.class));
+		verifyNoMoreInteractions(service);
 		
 	}
 	
 	@Test
-	public void updateUserSuccess() {
+	public void updateUserResourceNotFound() throws Exception {
 		
+		String uri = STARTING_URI + "/user";
+		
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		
+		when(service.updateUser(Mockito.any(User.class))).thenThrow(new ResourceNotFoundException("User", user.getId()));
+		
+		mvc.perform(put(uri)
+			.content(user.toJson())
+			.contentType(MediaType.APPLICATION_JSON_VALUE)
+			.with(SecurityMockMvcRequestPostProcessors.jwt()))
+			.andDo(print())
+			.andExpect(status().isNotFound());
+		
+		verify(service, times(1)).updateUser(Mockito.any(User.class));
+		verifyNoMoreInteractions(service);
 	}
 	
 	@Test
-	public void updateUserResourceNotFound() {
+	public void deleteUserSuccess() throws Exception {
 		
+		String uri = STARTING_URI + "/user/{id}";
+		int id = 1;
+		
+		User user = new User(id, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		
+		when(service.deleteUser(user.getId())).thenReturn(user);
+		
+		mvc.perform(delete(uri, id)
+			.contentType(MediaType.APPLICATION_JSON_VALUE)
+			.with(SecurityMockMvcRequestPostProcessors.jwt()))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+			.andExpect(jsonPath("$.id").value(user.getId()))
+			.andExpect(jsonPath("$.username").value(user.getUsername()))
+			.andExpect(jsonPath("$.password").value(user.getPassword()))
+			//.andExpect(jsonPath("$.role").value(user.getRole()))
+			.andExpect(jsonPath("$.enabled").value(user.isEnabled()));
+		
+		verify(service, times(1)).deleteUser(id);
+		verifyNoMoreInteractions(service);
 	}
 	
 	@Test
-	public void deleteUserSuccess() {
+	public void deleteUserResourceNotFound() throws Exception {
 		
-	}
-	
-	@Test
-	public void deleteUserResourceNotFound() {
+		String uri = STARTING_URI + "/user/{id}";
+		int id = 1;
 		
+		User user = new User(id, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		
+		when(service.deleteUser(user.getId())).thenThrow(new ResourceNotFoundException("User", id));
+		
+		mvc.perform(delete(uri, id)
+			.contentType(MediaType.APPLICATION_JSON_VALUE)
+			.with(SecurityMockMvcRequestPostProcessors.jwt()))
+			.andDo(print())
+			.andExpect(status().isNotFound());
+		
+		verify(service, times(1)).deleteUser(id);
+		verifyNoMoreInteractions(service);
 	}
 }
