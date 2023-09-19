@@ -38,6 +38,9 @@ build/
 # dependencies
 /react-app/node_modules
 /react-app/secrets
+/react-app/src/secrets
+/react-app/public/secrets
+
 /.pnp
 .pnp.js
 
