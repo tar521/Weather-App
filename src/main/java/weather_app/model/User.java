@@ -26,6 +26,10 @@ public class User implements Serializable {
 		ROLE_USER, ROLE_ADMIN
 	}
 	
+	public static enum Tolerance {
+		VERY_COLD, COLD, MODERATE, HOT, VERY_HOT
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -48,13 +52,19 @@ public class User implements Serializable {
 	@JsonProperty(access = Access.WRITE_ONLY)
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<SavedLocation> savedLocation;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Tolerance tolerance;
+	
+	
 
 	public User() {
 		super();
 	}
 
 	public User(Integer id, @NotBlank String username, @NotBlank String password, Role role, boolean enabled,
-			List<SavedLocation> savedLocation) {
+			List<SavedLocation> savedLocation, Tolerance tolerance) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -62,6 +72,7 @@ public class User implements Serializable {
 		this.role = role;
 		this.enabled = enabled;
 		this.savedLocation = savedLocation;
+		this.tolerance = tolerance;
 	}
 	
 	public Integer getId() {
@@ -111,11 +122,19 @@ public class User implements Serializable {
 	public void setSavedLocation(List<SavedLocation> savedLocation) {
 		this.savedLocation = savedLocation;
 	}
+	
+	public Tolerance getTolerance() {
+		return tolerance;
+	}
+
+	public void setTolerance(Tolerance tolerance) {
+		this.tolerance = tolerance;
+	}
 
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + ", enabled="
-				+ enabled + ", savedLocation=" + savedLocation + "]";
+				+ enabled + ", savedLocation=" + savedLocation + ", tolerance=" + tolerance + "]";
 	}
 
 	public String toJson() {

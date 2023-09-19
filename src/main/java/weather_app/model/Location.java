@@ -24,19 +24,10 @@ public class Location implements Serializable {
 	private Integer id;
 	
 	@Column(nullable = false)
-	private String name;
+	private String city;
 	
 	@Column(nullable = false)
-	private String region;
-	
-	@Column(nullable = false)
-	private String country;
-	
-	@Column(nullable = false)
-	private double lat;
-	
-	@Column(nullable = false)
-	private double lon;
+	private String zipcode;
 	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	@OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
@@ -46,15 +37,12 @@ public class Location implements Serializable {
 		super();
 	}
 
-	public Location(Integer id, String name, String region, String country, double lat, double lon,
+	public Location(Integer id, String city, String zipcode,
 			List<SavedLocation> savedLocation) {
 		super();
 		this.id = id;
-		this.name = name;
-		this.region = region;
-		this.country = country;
-		this.lat = lat;
-		this.lon = lon;
+		this.city = city;
+		this.zipcode = zipcode;
 		this.savedLocation = savedLocation;
 	}
 
@@ -66,45 +54,22 @@ public class Location implements Serializable {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getCity() {
+		return city;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCity(String city) {
+		this.city = city;
 	}
 
-	public String getRegion() {
-		return region;
+	public String getZipcode() {
+		return zipcode;
 	}
 
-	public void setRegion(String region) {
-		this.region = region;
+	public void setZipcode(String zipcode) {
+		this.zipcode = zipcode;
 	}
 
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	public double getLat() {
-		return lat;
-	}
-
-	public void setLat(double lat) {
-		this.lat = lat;
-	}
-
-	public double getLon() {
-		return lon;
-	}
-
-	public void setLon(double lon) {
-		this.lon = lon;
-	}
 
 	public List<SavedLocation> getSavedLocation() {
 		return savedLocation;
@@ -116,7 +81,6 @@ public class Location implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Location [id=" + id + ", name=" + name + ", region=" + region + ", country=" + country + ", lat=" + lat
-				+ ", lon=" + lon + ", savedLocation=" + savedLocation + "]";
+		return "Location [id=" + id + ", city=" + city + ", zipcode=" + zipcode + ", savedLocation=" + savedLocation + "]";
 	}
 }

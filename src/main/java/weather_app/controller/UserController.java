@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import weather_app.exception.ResourceNotFoundException;
 import weather_app.exception.UsernameTakenException;
 import weather_app.model.User;
+import weather_app.model.UserDTO;
 import weather_app.service.UserService;
 
 @RestController
@@ -37,6 +40,15 @@ public class UserController {
 		User found = service.getUserById(id);
 		
 		return ResponseEntity.status(200).body(found);
+	}
+	
+	@GetMapping("/user/whoami")
+	public ResponseEntity<UserDTO> getCurrentUser() throws ResourceNotFoundException {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String username = userDetails.getUsername();
+		User found = service.getUserByUsername(username);
+		
+		return null;
 	}
 	
 	@PostMapping("/user")
