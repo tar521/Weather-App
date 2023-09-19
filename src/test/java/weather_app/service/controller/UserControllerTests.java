@@ -16,7 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
@@ -76,10 +75,12 @@ public class UserControllerTests {
 			.andExpect(jsonPath("$[0].id").value(users.get(0).getId()))
 			.andExpect(jsonPath("$[0].username").value(users.get(0).getUsername()))
 			.andExpect(jsonPath("$[0].password").value(users.get(0).getPassword()))
+			.andExpect(jsonPath("$[0].role").value(users.get(0).getRole().name()))
 			.andExpect(jsonPath("$[0].enabled").value(users.get(0).isEnabled()))
 			.andExpect(jsonPath("$[1].id").value(users.get(1).getId()))
 			.andExpect(jsonPath("$[1].username").value(users.get(1).getUsername()))
 			.andExpect(jsonPath("$[1].password").value(users.get(1).getPassword()))
+			.andExpect(jsonPath("$[1].role").value(users.get(1).getRole().name()))
 			.andExpect(jsonPath("$[1].enabled").value(users.get(1).isEnabled()));
 		
 		verify(service, times(1)).getAllUsers();
@@ -104,7 +105,7 @@ public class UserControllerTests {
 			.andExpect(jsonPath("$.id").value(user.getId()))
 			.andExpect(jsonPath("$.username").value(user.getUsername()))
 			.andExpect(jsonPath("$.password").value(user.getPassword()))
-			//.andExpect(jsonPath("$.role").value(user.getRole()))
+			.andExpect(jsonPath("$.role").value(user.getRole().name()))
 			.andExpect(jsonPath("$.enabled").value(user.isEnabled()));
 		
 		verify(service, times(1)).getUserById(user.getId());
@@ -147,7 +148,7 @@ public class UserControllerTests {
 			.andExpect(jsonPath("$.id").value(user.getId()))
 			.andExpect(jsonPath("$.username").value(user.getUsername()))
 			.andExpect(jsonPath("$.password").value(user.getPassword()))
-			//.andExpect(jsonPath("$.role").value(user.getRole()))
+			.andExpect(jsonPath("$.role").value(user.getRole().name()))
 			.andExpect(jsonPath("$.enabled").value(user.isEnabled()));
 		
 		verify(service, times(1)).createUser(Mockito.any(User.class));
@@ -194,7 +195,7 @@ public class UserControllerTests {
 			.andExpect(jsonPath("$.id").value(updated.getId()))
 			.andExpect(jsonPath("$.username").value(updated.getUsername()))
 			.andExpect(jsonPath("$.password").value(updated.getPassword()))
-			//.andExpect(jsonPath("$.role").value(user.getRole()))
+			.andExpect(jsonPath("$.role").value(user.getRole().name()))
 			.andExpect(jsonPath("$.enabled").value(updated.isEnabled()));
 		
 		verify(service, times(1)).updateUser(Mockito.any(User.class));
@@ -241,7 +242,7 @@ public class UserControllerTests {
 			.andExpect(jsonPath("$.id").value(user.getId()))
 			.andExpect(jsonPath("$.username").value(user.getUsername()))
 			.andExpect(jsonPath("$.password").value(user.getPassword()))
-			//.andExpect(jsonPath("$.role").value(user.getRole()))
+			.andExpect(jsonPath("$.role").value(user.getRole().name()))
 			.andExpect(jsonPath("$.enabled").value(user.isEnabled()));
 		
 		verify(service, times(1)).deleteUser(id);
