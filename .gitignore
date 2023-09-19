@@ -1,6 +1,7 @@
 HELP.md
 /secrets
 target/
+src/main/resources/secrets.properties
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -37,6 +38,9 @@ build/
 # dependencies
 /react-app/node_modules
 /react-app/secrets
+/react-app/src/secrets
+/react-app/public/secrets
+
 /.pnp
 .pnp.js
 

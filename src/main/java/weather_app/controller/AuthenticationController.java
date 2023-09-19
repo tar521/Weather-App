@@ -1,18 +1,25 @@
 package weather_app.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import weather_app.config.AppConfig;
+import weather_app.exception.UsernameTakenException;
 import weather_app.model.AuthenticationRequest;
 import weather_app.model.AuthenticationResponse;
+import weather_app.model.User;
+import weather_app.service.UserService;
 import weather_app.util.JwtUtil;
 
 @RestController
@@ -24,6 +31,12 @@ public class AuthenticationController {
 
 	@Autowired
 	UserDetailsService userDetailsService;
+	
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	AppConfig appConfig;
 
 	@Autowired
 	JwtUtil jwtUtil;
@@ -57,4 +70,18 @@ public class AuthenticationController {
 		// return the token
 		return ResponseEntity.status(201).body( new AuthenticationResponse(jwt) );
 	}	
+	
+	@PostMapping("/register/{zipcode}")
+	public ResponseEntity<?> registerUser(@RequestBody User user, @PathVariable String zipcode) throws UsernameTakenException {
+		User created = userService.createUser(user);
+		return null;
+		
+	}
+	
+	@GetMapping("/test")
+	public String testEndpoint() {
+		String tester = appConfig.getKey();
+		System.out.println(tester);
+		return tester;
+	}
 }

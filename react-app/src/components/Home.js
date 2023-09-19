@@ -1,25 +1,29 @@
 import React, {useState, useEffect} from 'react'
 import { useAppContext } from "../lib/contextLib";
+import "./Home.css";
 
 const Home = () => {
 
-  
-
   const { isAuthenticated, token } = useAppContext();
+  const { firstLoad, setFirstLoad} = useState(true);
   const [ response, setResponse ] = useState([]);
-
-  function printAuth() {
-    return ("" + isAuthenticated.toString() + " " + token.jwt.toString());
-  }
+  const [ forecast, setForcast] = useState([]);
+  const [ hourly, setHourly] = useState([]);
+  const [ uri, setUri] = useState("");
 
   useEffect(()=>{
-
-    handleButton()
+    if (firstLoad) {
+      const fjson = require('../secrets/secrets.json');
+      setUri("http://api.weatherapi.com/v1/forecast.json?key=" + fjson.weather_api_key + "&q=50312&days=1&aqi=no&alerts=no")
+    }
+    if (isAuthenticated) {
+      handleButton()
+    }
 
   },[])
 
   async function fetchData() {
-    return fetch('http://api.weatherapi.com/v1/forecast.json?key=96f72f7e3db14c98b6c184128231309&q=50312&days=1&aqi=no&alerts=no', {
+    return fetch(uri, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -42,21 +46,41 @@ const Home = () => {
     try {
       const response1 = await fetchData();
       setResponse(response1)
+      setForcast(response1.forecast.forecastday)
+      setHourly(response1.forecast.forecastday[0].hour)
       console.log(response.current.temp_c.toString())
-      // return (
-      //   <pre>{JSON.stringify(response, null, 2)}</pre>
-      // );
     } catch (e) {
       console.log(e);
     }
   }
 
+  function renderLander() {
+    return (
+      <div className="lander">
+        <h1>Weather Dashboard</h1>
+        <p className="text-muted">A personalized weather application</p>
+        <br/>
+        <br/>
+        <p>Please Login to access dashboard</p>
+      </div>
+    );
+  }
+
+  function renderDashboard() {
+    return (
+      <div>
+        <div>{JSON.stringify(response, null, 2)}</div>
+        <br/>
+        <div>{JSON.stringify(forecast, null, 2)}</div>
+        <br/>
+        <div>{JSON.stringify(hourly, null, 2)}</div>
+      </div>
+    )
+  }
+
   return (
-    <div>
-      <h1>Home</h1>
-      {/* <p>{printAuth()}</p> */}
-      {/* <button onClick="handleButton()">Click!</button> */}
-      <div>{JSON.stringify(response, null, 2)}</div>
+    <div className="Home">
+        {isAuthenticated ? renderDashboard(): renderLander()}
       </div>
 
   )
