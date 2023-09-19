@@ -13,6 +13,8 @@ function App() {
   const nav = useNavigate();
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [isAuthenticated, userHasAuthenticated] = useState(false);
+  const [isRegistered, userRegistered] = useState(false);
+  const [location, setLocation] = useState("")
   const [token, setToken] = useState("");
 
   useEffect(() => {
@@ -21,6 +23,9 @@ function App() {
   
   async function onLoad() {
     try {
+      if (isRegistered) {
+        userRegistered(false);
+      }
       await loggedIn();
       userHasAuthenticated(true);
     } catch (e) {
@@ -74,14 +79,18 @@ function App() {
                 <LinkContainer to="/login">
                   <Nav.Link>Login</Nav.Link>
                 </LinkContainer>
+                <LinkContainer to="/register">
+                  <Nav.Link>Register</Nav.Link>
+                </LinkContainer>
               </>
+
             )}
             </Nav>
           </Navbar.Collapse>
           </Container>
         </Navbar>
 
-        <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated, token, setToken }}>
+        <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated, token, setToken, isRegistered, userRegistered, location, setLocation }}>
           <Routes />
         </AppContext.Provider>
     </>

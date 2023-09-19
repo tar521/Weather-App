@@ -4,8 +4,10 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import NotFound from "./components/NotFound";
 import Settings from "./components/Settings";
+import Register from "./components/Register";
 import AuthenticatedRoute from "./components/AuthenticatedRoute";
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute";
+import RegisterRoute from "./components/RegisterRoute";
 
 export default function Links() {
   return (
@@ -16,6 +18,12 @@ export default function Links() {
         <Login />
       </UnauthenticatedRoute>
     }
+    />
+    <Route path="/register" element={
+      <RegisterRoute>
+        <Register />
+      </RegisterRoute>
+    } 
     />
     <Route path="/settings" element={
       <AuthenticatedRoute>

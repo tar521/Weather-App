@@ -26,6 +26,23 @@ public class SavedLocationService {
 	@Autowired
 	LocationRepository locationRepo;
 	
+	public List<Location> getAllLocations() {
+		return locationRepo.findAll();
+	}
+	
+	public Location createLocation(String zipcode) {
+		Optional<Location> found = locationRepo.getLocationByZipcode(zipcode);
+		
+		// if found return the object
+		if (!found.isEmpty()) {
+			return found.get();
+		}
+		
+		// if not found create new location
+		return null;
+		
+	}
+	
 	public List<SavedLocation> getAllSavedLocations() {
 		
 		return repo.findAll();

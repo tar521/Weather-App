@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import './Login.css';
-import LoaderButton from "../components/LoaderButton";import { useAppContext } from "../lib/contextLib";
+import LoaderButton from "../components/LoaderButton";
+import { useAppContext } from "../lib/contextLib";
 import { onError } from "../lib/errorLib";
 import Form from "react-bootstrap/Form";
 
 export default function Login() {
 
   const [isLoading, setIsLoading] = useState(false);
-  const { userHasAuthenticated, setToken } = useAppContext();
+  const { userHasAuthenticated, setToken, setLocation } = useAppContext();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -34,6 +35,25 @@ export default function Login() {
     });
    }
 
+   async function getUser(token) {
+    return fetch('http://localhost:8080/api/user/whoami', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token.jwt
+      }
+    })
+     .then(data =>  {
+      if (data.ok) {
+        return data.json();
+      }
+      throw new Error("WRONG USERNAME AND PASSWORD");
+    })
+     .catch((error) => {
+      console.log(error);
+    });
+   }
+
    async function handleSubmit(event) {
     event.preventDefault();
 
@@ -41,6 +61,7 @@ export default function Login() {
 
     try {
         const token = await userLogin({username, password});
+        const user = await getUser(token);
         userHasAuthenticated(true);
         setToken(token);
     }   catch (e) {
