@@ -31,6 +31,7 @@ public class SavedLocationService {
 	}
 	
 	public Location createLocation(String zipcode) {
+		
 		Optional<Location> found = locationRepo.getLocationByZipcode(zipcode);
 		
 		// if found return the object
@@ -40,7 +41,6 @@ public class SavedLocationService {
 		
 		// if not found create new location
 		return null;
-		
 	}
 	
 	public List<SavedLocation> getAllSavedLocations() {

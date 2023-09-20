@@ -1,6 +1,9 @@
 package weather_app.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -41,16 +44,61 @@ public class SavedLocationServiceTests {
 	private SavedLocationService service;
 	
 	@Test
+	public void testGetAllLocations() {
+		
+		List<Location> locations = new ArrayList<>();
+		locations.add(new Location(1, "Seattle", "98101", null));
+		locations.add(new Location(1, "Chicago", "60007", null));
+		
+		when(locationRepo.findAll()).thenReturn(locations);
+		
+		List<Location> result = service.getAllLocations();
+		
+		assertEquals(locations, result);
+		
+		verify(locationRepo, times(1)).findAll();
+		verifyNoMoreInteractions(locationRepo);
+	}
+	
+	@Test
+	public void testCreateLocationSuccessResourceFound() {
+		
+		Location location = new Location(1, "Seattle", "98101", null);
+		
+		when(locationRepo.getLocationByZipcode(location.getZipcode())).thenReturn(Optional.of(location));
+		
+		Location result = service.createLocation(location.getZipcode());
+		
+		assertEquals(location, result);
+		
+		verify(locationRepo, times(1)).getLocationByZipcode(location.getZipcode());
+		verifyNoMoreInteractions(locationRepo);
+	}
+	
+	@Test
+	public void testCreateLocationSuccessCreatesLocation() {
+		
+		Location location = new Location(1, "Seattle", "98101", null);
+		
+		when(locationRepo.getLocationByZipcode(location.getZipcode())).thenReturn(Optional.empty());
+		
+		Location result = service.createLocation(location.getZipcode());
+		
+		assertNull(result);
+	}
+	
+	@Test
 	public void testGetAllSavedLocationsSuccess() {
+		
 		List<SavedLocation> savedLocations = new ArrayList<>();
 		savedLocations.add(new SavedLocation(
 			1,
 			new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE),
-			new Location(1, "Seattle", "1111", null)));
+			new Location(1, "Seattle", "98101", null)));
 		savedLocations.add(new SavedLocation(
 			1,
 			new User(1, "Conner", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE),
-			new Location(1, "Tacoma", "1111", null)));
+			new Location(1, "Chicago", "60007", null)));
 		
 		when(repo.findAll()).thenReturn(savedLocations);
 		
@@ -66,7 +114,7 @@ public class SavedLocationServiceTests {
 	public void testGetSavedLocationById() throws Exception {
 		
 		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
-		Location location = new Location(1, "Seattle", "1111", null);
+		Location location = new Location(1, "Seattle", "98101", null);
 		SavedLocation savedLocation = new SavedLocation(1, user, location);
 		
 		when(repo.findById(savedLocation.getId())).thenReturn(Optional.of(savedLocation));
@@ -80,11 +128,23 @@ public class SavedLocationServiceTests {
 	}
 	
 	@Test
+	public void testGetSavedLocationByIdResourceNotFound() {
+		
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
+		Location location = new Location(1, "Seattle", "98101", null);
+		SavedLocation savedLocation = new SavedLocation(1, user, location);
+		
+		when(repo.findById(savedLocation.getId())).thenReturn(Optional.empty());
+		
+		assertThrows(ResourceNotFoundException.class, () -> service.getSavedLocationById(savedLocation.getId()));
+	}
+	
+	@Test
 	public void testCreateSavedLocationSuccess() throws Exception {
 		
 		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
-		Location location = new Location(1, "Seattle", "1111", null);
-		SavedLocation savedLocation = new SavedLocation(null, user, location);
+		Location location = new Location(1, "Seattle", "98101", null);
+		SavedLocation savedLocation = new SavedLocation(1, user, location);
 		
 		when(locationRepo.findById(location.getId())).thenReturn(Optional.of(location));
 		when(repo.save(Mockito.any(SavedLocation.class))).thenReturn(savedLocation);
@@ -97,5 +157,48 @@ public class SavedLocationServiceTests {
 		verifyNoMoreInteractions(locationRepo);
 		verify(repo, times(1)).save(Mockito.any(SavedLocation.class));
 		verifyNoMoreInteractions(repo);
+	}
+	
+	@Test
+	public void testCreateSavedLocationResourceNotFound() {
+		
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
+		Location location = new Location(1, "Seattle", "98101", null);
+		SavedLocation savedLocation = new SavedLocation(1, user, location);
+		
+		when(locationRepo.findById(location.getId())).thenReturn(Optional.empty());
+		
+		assertThrows(ResourceNotFoundException.class, () -> service.createSavedLocation(user, location.getId()));
+	}
+	
+	@Test
+	public void testDeleteSavedLocationSuccess() throws Exception {
+		
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
+		Location location = new Location(1, "Seattle", "98101", null);
+		SavedLocation savedLocation = new SavedLocation(1, user, location);
+		
+		when(repo.findById(savedLocation.getId())).thenReturn(Optional.of(savedLocation));
+		doNothing().when(repo).deleteById(savedLocation.getId());
+		
+		SavedLocation result = service.deleteSavedLocation(savedLocation.getId());
+		
+		assertEquals(savedLocation, result);
+		
+		verify(repo, times(1)).findById(savedLocation.getId());
+		verify(repo, times(1)).deleteById(savedLocation.getId());
+		verifyNoMoreInteractions(repo);
+	}
+	
+	@Test
+	public void testDeleteSavedLocationResourceNotFound() {
+		
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
+		Location location = new Location(1, "Seattle", "98101", null);
+		SavedLocation savedLocation = new SavedLocation(1, user, location);
+		
+		when(repo.findById(savedLocation.getId())).thenReturn(Optional.empty());
+		
+		assertThrows(ResourceNotFoundException.class, () -> service.deleteSavedLocation(savedLocation.getId()));
 	}
 }
