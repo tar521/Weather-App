@@ -20,11 +20,19 @@ public class MessageService {
 		
 		List<Message> messages = repo.findAllApplicableMessages(weather.getTemp());
 		
-		Random rand = new Random();
+		try {
+			Random rand = new Random();
+			
+			Message message = messages.get(rand.nextInt(messages.size()));
+			
+			return message.getMessage();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		Message message = messages.get(rand.nextInt(messages.size()));
+		return "If you don't like the weather now, just wait ten minutes.";
 		
-		return message.getMessage();
 	}
 
 	
