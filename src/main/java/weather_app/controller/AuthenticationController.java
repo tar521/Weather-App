@@ -1,5 +1,7 @@
 package weather_app.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import weather_app.config.AppConfig;
+import weather_app.exception.ResourceNotFoundException;
 import weather_app.exception.UsernameTakenException;
 import weather_app.model.AuthenticationRequest;
 import weather_app.model.AuthenticationResponse;
+import weather_app.model.Location;
 import weather_app.model.User;
+import weather_app.service.SavedLocationService;
 import weather_app.service.UserService;
 import weather_app.util.JwtUtil;
 
@@ -34,6 +39,9 @@ public class AuthenticationController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	SavedLocationService locationService;
 	
 	@Autowired
 	AppConfig appConfig;
@@ -72,9 +80,15 @@ public class AuthenticationController {
 	}	
 	
 	@PostMapping("/register/{zipcode}")
-	public ResponseEntity<?> registerUser(@RequestBody User user, @PathVariable String zipcode) throws UsernameTakenException {
+	public ResponseEntity<?> registerUser(@RequestBody User user, @PathVariable String zipcode) throws UsernameTakenException, IOException, ResourceNotFoundException {
 		User created = userService.createUser(user);
-		return null;
+		Location loc = locationService.createLocation(zipcode);
+		if (loc == null) {
+			return ResponseEntity.status(400).body("Error Occured");
+		}
+		
+		locationService.createSavedLocation(created, loc.getId());
+		return ResponseEntity.status(201).body("success");
 		
 	}
 	
