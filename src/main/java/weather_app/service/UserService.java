@@ -74,9 +74,14 @@ public class UserService {
 	
 	public User deleteUser(int id) throws ResourceNotFoundException {
 		
-		User deleted = getUserById(id);
+		Optional<User> found = repo.findById(id);
+		
+		if (found.isEmpty()) {
+			throw new ResourceNotFoundException("User", id);
+		}
+		
 		repo.deleteById(id);
 		
-		return deleted;
+		return found.get();
 	}
 }

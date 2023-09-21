@@ -40,7 +40,9 @@ public class SavedLocationService {
 		return locationRepo.findAll();
 	}
 	
+
 	public Location createLocation(String zipcode) throws IOException {
+
 		Optional<Location> found = locationRepo.getLocationByZipcode(zipcode);
 		
 		// if found return the object
@@ -66,7 +68,6 @@ public class SavedLocationService {
 		
 		// if not found create new location
 		return null;
-		
 	}
 	
 	public List<SavedLocation> getAllSavedLocations() {
@@ -88,13 +89,15 @@ public class SavedLocationService {
 	public SavedLocation createSavedLocation(User user, int locationId) throws ResourceNotFoundException {
 		
 		Optional<Location> foundLocation = locationRepo.findById(locationId);
+		
 		if (foundLocation.isEmpty()) {
 			throw new ResourceNotFoundException("Location", locationId);
 		}
 		
 		SavedLocation created = new SavedLocation(null, user, foundLocation.get());
 		
-		return repo.save(created);
+		SavedLocation test = repo.save(created);
+		return test;
 	}
 	
 	public List<SavedLocation> getUserSavedLocations(User user) {
