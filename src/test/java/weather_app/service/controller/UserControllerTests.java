@@ -61,8 +61,8 @@ public class UserControllerTests {
 		
 		List<User> users = new ArrayList<>();
 		
-		users.add(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
-		users.add(new User(2, "Conner", "pw123", User.Role.ROLE_USER, true, null));
+		users.add(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
+		users.add(new User(2, "Conner", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
 		
 		when(service.getAllUsers()).thenReturn(users);
 		
@@ -93,7 +93,7 @@ public class UserControllerTests {
 		int id = 1;
 		String uri = STARTING_URI + "/user/{id}";
 		
-		User user = new User(id, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		User user = new User(id, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
 		
 		when(service.getUserById(id)).thenReturn(user);
 		
@@ -134,7 +134,7 @@ public class UserControllerTests {
 		
 		String uri = STARTING_URI + "/user";
 		
-		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
 		
 		when(service.createUser(Mockito.any(User.class))).thenReturn(user);
 		
@@ -160,7 +160,7 @@ public class UserControllerTests {
 		
 		String uri = STARTING_URI + "/user";
 		
-		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
 		
 		when(service.createUser(Mockito.any(User.class))).thenThrow(new UsernameTakenException(user));
 		
@@ -180,8 +180,8 @@ public class UserControllerTests {
 		
 		String uri = STARTING_URI + "/user";
 		
-		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
-		User updated = new User(1, "Conner", "pw123", User.Role.ROLE_USER, true, null);
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
+		User updated = new User(1, "Conner", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
 		
 		when(service.updateUser(Mockito.any(User.class))).thenReturn(updated);
 		
@@ -208,7 +208,7 @@ public class UserControllerTests {
 		
 		String uri = STARTING_URI + "/user";
 		
-		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		User user = new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
 		
 		when(service.updateUser(Mockito.any(User.class))).thenThrow(new ResourceNotFoundException("User", user.getId()));
 		
@@ -229,7 +229,7 @@ public class UserControllerTests {
 		String uri = STARTING_URI + "/user/{id}";
 		int id = 1;
 		
-		User user = new User(id, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		User user = new User(id, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
 		
 		when(service.deleteUser(user.getId())).thenReturn(user);
 		
@@ -255,7 +255,7 @@ public class UserControllerTests {
 		String uri = STARTING_URI + "/user/{id}";
 		int id = 1;
 		
-		User user = new User(id, "Mitch", "pw123", User.Role.ROLE_USER, true, null);
+		User user = new User(id, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE);
 		
 		when(service.deleteUser(user.getId())).thenThrow(new ResourceNotFoundException("User", id));
 		

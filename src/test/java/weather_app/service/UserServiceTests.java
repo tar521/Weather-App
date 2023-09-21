@@ -54,7 +54,7 @@ public class UserServiceTests {
 	@Test
 	public void testGetUserByIdSuccess() throws Exception {
 		
-		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
 		
 		when(repo.findById(user.get().getId())).thenReturn(user);
 		
@@ -69,7 +69,7 @@ public class UserServiceTests {
 	@Test
 	public void testGetUserByIdResourceNotFound() {
 		
-		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
 		
 		when(repo.findById(user.get().getId())).thenReturn(Optional.empty());
 		
@@ -79,7 +79,7 @@ public class UserServiceTests {
 	@Test
 	public void testGetUserByUsernameSucess() throws Exception {
 		
-		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
 		
 		when(repo.findByUsername(user.get().getUsername())).thenReturn(user);
 		
@@ -94,7 +94,7 @@ public class UserServiceTests {
 	@Test
 	public void testGetUserByUsernameResourceNotFound() {
 		
-		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
 		
 		when(repo.findByUsername(user.get().getUsername())).thenReturn(Optional.empty());
 		
@@ -104,7 +104,7 @@ public class UserServiceTests {
 	@Test
 	public void testCreateUserSuccess() throws Exception {
 		
-		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
 		
 		when(repo.findByUsername(user.get().getUsername())).thenReturn(Optional.empty());
 		when(repo.save(user.get())).thenReturn(user.get());
@@ -124,7 +124,7 @@ public class UserServiceTests {
 	@Test
 	public void testCreateUserUsernameTaken() {
 		
-		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
 		
 		when(repo.findByUsername(user.get().getUsername())).thenReturn(user);
 		
@@ -134,8 +134,8 @@ public class UserServiceTests {
 	@Test
 	public void updateUserSuccess() throws Exception {
 		
-		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
-		Optional<User> updated = Optional.of(new User(1, "Conner", "pw123", User.Role.ROLE_USER, true, null));
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
+		Optional<User> updated = Optional.of(new User(1, "Conner", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
 		
 		when(repo.existsById(user.get().getId())).thenReturn(true);
 		when(repo.save(updated.get())).thenReturn(updated.get());
@@ -152,7 +152,7 @@ public class UserServiceTests {
 	@Test
 	public void updateUserResourceNotFound() {
 		
-		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
 		
 		when(repo.existsById(user.get().getId())).thenReturn(false);
 		
@@ -162,7 +162,7 @@ public class UserServiceTests {
 	@Test
 	public void deleteUserSuccess() throws Exception {
 		
-		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
 		
 		when(repo.findById(user.get().getId())).thenReturn(user);
 		doNothing().when(repo).deleteById(user.get().getId());
@@ -179,7 +179,7 @@ public class UserServiceTests {
 	@Test
 	public void deleteUserResourceNotFound() {
 		
-		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null));
+		Optional<User> user = Optional.of(new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE));
 		
 		when(repo.findById(user.get().getId())).thenReturn(Optional.empty());
 		
