@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import weather_app.exception.ResourceNotFoundException;
 import weather_app.exception.UsernameTakenException;
+import weather_app.model.SavedLocation;
 import weather_app.model.User;
 import weather_app.model.UserDTO;
+import weather_app.service.SavedLocationService;
 import weather_app.service.UserService;
 
 @RestController
@@ -27,6 +29,9 @@ public class UserController {
 
 	@Autowired
 	UserService service;
+	
+	@Autowired
+	SavedLocationService locationService;
 	
 	@GetMapping("/user")
 	public List<User> getAllUsers() {
@@ -47,8 +52,10 @@ public class UserController {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String username = userDetails.getUsername();
 		User found = service.getUserByUsername(username);
-		
-		return null;
+		List<SavedLocation> userLocations = locationService.getUserSavedLocations(found);
+		found.setSavedLocation(userLocations);
+		UserDTO result = new UserDTO(found);
+		return ResponseEntity.status(200).body(result);
 	}
 	
 	@PostMapping("/user")

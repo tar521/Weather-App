@@ -45,7 +45,9 @@ public class SecurityConfiguration {
 		http.cors().and().csrf().disable()
 			.authorizeRequests()
 			.antMatchers("/authenticate").permitAll()	// let anyone try to create a token
+			.antMatchers("/register/**").permitAll()
 			.antMatchers("/test").permitAll()
+			.antMatchers("/user/whoami").permitAll()
 			.antMatchers("/api/hello").hasRole("USER")
 			.antMatchers("/api/admin").hasRole("ADMIN")
 			.antMatchers(HttpMethod.POST, "/api/user").permitAll() // anyone can create a user
