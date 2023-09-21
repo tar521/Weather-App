@@ -14,7 +14,7 @@ function App() {
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [isRegistered, userRegistered] = useState(false);
-  const [location, setLocation] = useState("")
+  const [user, setUser] = useState("")
   const [token, setToken] = useState("");
 
   useEffect(() => {
@@ -47,7 +47,9 @@ function App() {
 
   function handleLogout() {
     userHasAuthenticated(false);
+    userRegistered(false)
     setToken("");
+    setUser("")
     nav("/login");
     //setIsAuthenticating(true);
   }
@@ -90,7 +92,7 @@ function App() {
           </Container>
         </Navbar>
 
-        <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated, token, setToken, isRegistered, userRegistered, location, setLocation }}>
+        <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated, token, setToken, isRegistered, userRegistered, user, setUser }}>
           <Routes />
         </AppContext.Provider>
     </>

@@ -8,7 +8,7 @@ import Form from "react-bootstrap/Form";
 export default function Login() {
 
   const [isLoading, setIsLoading] = useState(false);
-  const { userHasAuthenticated, setToken, setLocation } = useAppContext();
+  const { userHasAuthenticated, setToken, setUser } = useAppContext();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -64,6 +64,8 @@ export default function Login() {
         const user = await getUser(token);
         userHasAuthenticated(true);
         setToken(token);
+        console.log(user)
+        setUser(user)
     }   catch (e) {
         onError(e);
         setIsLoading(false);
