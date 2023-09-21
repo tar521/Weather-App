@@ -11,7 +11,7 @@ import weather_app.model.Message;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Integer> {
 
-	@Query(value=" select * from Message WHERE min_temp <= ?1 AND max_temp >= ?1 AND precipitation IS NULL ", nativeQuery=true)
+	@Query(value="select * from message WHERE min_temp <= ?1 AND max_temp >= ?1", nativeQuery=true)
 	public List<Message> findAllApplicableMessages(double temp);
 
 }

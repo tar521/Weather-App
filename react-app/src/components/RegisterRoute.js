@@ -15,11 +15,12 @@ function querystring(name, url = window.location.href) {
   }
 
   export default function RegisterRoute(props) {
-    const { isRegistered } = useAppContext();
+    const { isRegistered, userRegistered } = useAppContext();
     const { children } = props;
     const redirect = querystring("redirect");
   
     if (isRegistered) {
+      userRegistered(false)
       return <Navigate to={redirect || "/"} />;
     }
   

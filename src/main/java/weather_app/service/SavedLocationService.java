@@ -50,7 +50,7 @@ public class SavedLocationService {
 			return found.get();
 		}
 		
-		String url = "http://api.weatherapi.com/v1/forecast.json?key=" + env.getProperty("weather_api_key") + "&q=50312&days=1&aqi=no&alerts=no";
+		String url = "http://api.weatherapi.com/v1/forecast.json?key=" + env.getProperty("weather_api_key") + "&q=" + zipcode + "&days=1&aqi=no&alerts=no";
 		URL uri = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) uri.openConnection();
 		con.setRequestMethod("POST");

@@ -4,9 +4,9 @@ public class Weather {
 
 	private double temp;
 	
-	private boolean precipitation;
+	private Boolean precipitation;
 
-	public Weather(double temp, boolean precipitation) {
+	public Weather(double temp, Boolean precipitation) {
 		super();
 		this.temp = temp;
 		this.precipitation = precipitation;
@@ -16,7 +16,7 @@ public class Weather {
 		return temp;
 	}
 
-	public boolean isPrecipitation() {
+	public Boolean isPrecipitation() {
 		return precipitation;
 	}
 

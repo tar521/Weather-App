@@ -26,7 +26,7 @@ export default function Register() {
       }
 
     async function userRegister(user) {
-        return fetch('http://localhost:8080/api/user', {
+        return fetch('http://localhost:8080/register/' + zipcode, {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json'

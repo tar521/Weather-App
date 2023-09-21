@@ -47,7 +47,9 @@ function App() {
 
   function handleLogout() {
     userHasAuthenticated(false);
+    userRegistered(false)
     setToken("");
+    setUser("")
     nav("/login");
     //setIsAuthenticating(true);
   }

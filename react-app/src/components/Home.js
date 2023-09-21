@@ -22,7 +22,7 @@ const Home = () => {
   const [ dropTitle, setDropTitle ] = useState("");
   const [ locationSet, setLocationSet ] = useState([])
   const [ setUp, setSetUp ] = useState(false);
-  //{'eventKey': "1", 'title': "option1"}, {'eventKey': "2", 'title': "option2"}, {'eventKey': "3", 'title': "option3"}
+  const [ message, setMessage ] = useState("")
   
   useEffect(()=>{
     if (isAuthenticated) {
@@ -52,6 +52,26 @@ const Home = () => {
    });
   }
 
+  async function getMessage(weather) {
+    return fetch('http://localhost:8080/api/message', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token.jwt
+      },
+      body: JSON.stringify(weather)
+    })
+    .then(data =>  {
+     if (data.ok) {
+       return data.text();
+     }
+     throw new Error("Something went wrong");
+   })
+    .catch((error) => {
+     console.log(error);
+   });
+  }
+
   async function handleButton() {
     //event.preventDefault();
 
@@ -71,6 +91,12 @@ const Home = () => {
         locationSetupSet.push(tempObj)
         index += 1;
       }
+      const messageObj = {
+        "temp": parseFloat(response1.current.temp_f),
+        "precipitation": null
+      }
+      const message1 = await getMessage(messageObj);
+      setMessage(message1)
       setLocationSet(locationSetupSet)
       setDropTitle(user.savedLocation[currentIndex].location.city + ", " + user.savedLocation[currentIndex].location.zipcode)
       setResponse(response1)
@@ -90,6 +116,12 @@ const Home = () => {
   async function updateWeather(updateLocation) {
     try {
       const response1 = await fetchData(updateLocation.index);
+      const messageObj = {
+        "temp": parseFloat(response1.current.temp_f),
+        "precipitation": null
+      }
+      const message1 = await getMessage(messageObj);
+      setMessage(message1)
       setCurrentLocation(user.savedLocation[updateLocation.index].location)
       
       setResponse(response1)
@@ -134,40 +166,22 @@ const Home = () => {
               onClick={(e) => {setDropTitle(label.title); setCurrentIndex(label.index); updateWeather(label);}}>{label.title}</Dropdown.Item>
             ),
           )}
-          {/* <Dropdown.Item eventKey="1">Other Location</Dropdown.Item>
-          <Dropdown.Item eventKey="2">Another Location</Dropdown.Item> */}
         </DropdownButton>
         <Button className='spacing'>No Op!</Button>
         </ButtonGroup>
-        {/* </Container> */}
-        {/* <Container className="rendered"> */}
         <ButtonGroup className="spacing">
         <Button className='spacing'>No Op!</Button>
         </ButtonGroup>
-        {/* </Container> */}
         <Card className="text-center"
         border="success">
-        {/* bg="info"
-        text="white" */}
           <Card.Header>{dropTitle}</Card.Header>
           <Card.Body>
             <Card.Title>{JSON.stringify(currentTemp, null, 2)}{'\u00B0'}{'F'}</Card.Title>
-            <Card.Text>{'Second Text'}</Card.Text>
+            <Card.Text>{JSON.stringify(message, null, 2)}</Card.Text>
             <Card.Text>{'Feels like: '}{feelsLike}{'\u00B0'}{'F'}</Card.Text>
             <Card.Text>{'Todays min/max: '}{mintemp}{'\u00B0'}{'F'}{' | '}{maxtemp}{'\u00B0'}{'F'}</Card.Text>
           </Card.Body>
         </Card>
-
-      {/* <div className="rendered">
-        <h3>Location, Zipcode</h3>
-        <h4>{JSON.stringify(currentTemp, null, 2)}{'\u00B0'}{'F'}</h4>
-        <h5>{'Feels like: '}{feelsLike}{'\u00B0'}{'F'}</h5>
-        <div>{JSON.stringify(response, null, 2)}</div>
-        <br/>
-        <div>{JSON.stringify(forecast, null, 2)}</div>
-        <br/>
-        <div>{JSON.stringify(hourly, null, 2)}</div>
-      </div> */}
       </Container>
       </div>
     )
