@@ -7,12 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import weather_app.exception.ResourceNotFoundException;
 import weather_app.exception.UsernameTakenException;
 import weather_app.model.User;
 import weather_app.repository.UserRepository;
 
 @Service
+@Tag(name = "User Service", description = "The service for user business logic")
 public class UserService {
 
 	@Autowired
@@ -21,6 +24,7 @@ public class UserService {
 	@Autowired
 	PasswordEncoder encoder;
 	
+	@Operation(summary = "Get all users", description = "Returns a list of all users")
 	public List<User> getAllUsers() {
 		return repo.findAll();
 	}
@@ -36,6 +40,7 @@ public class UserService {
 		return found.get();
 	}
 	
+	@Operation(summary = "Get a user by id", description = "Returns a user based on id")
 	public User getUserByUsername(String username) throws ResourceNotFoundException {
 		
 		Optional<User> found = repo.findByUsername(username);
@@ -47,6 +52,7 @@ public class UserService {
 		return found.get();
 	}
 	
+	@Operation(summary = "Creates a user", description = "Creates a user based on request body")
 	public User createUser(User user) throws UsernameTakenException {
 		
 		Optional<User> exists = repo.findByUsername(user.getUsername());
@@ -62,6 +68,7 @@ public class UserService {
 		return created;
 	}
 	
+	@Operation(summary = "Updates a user", description = "Updates a user based on request body")
 	public User updateUser(User user) throws ResourceNotFoundException {
 		
 		if (repo.existsById(user.getId())) {
@@ -72,6 +79,7 @@ public class UserService {
 		throw new ResourceNotFoundException("User", user.getId());
 	}
 	
+	@Operation(summary = "Deletes a user", description = "Deletes a user based on id")
 	public User deleteUser(int id) throws ResourceNotFoundException {
 		
 		Optional<User> found = repo.findById(id);

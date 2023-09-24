@@ -52,39 +52,39 @@ public class SavedLocationControllerTests {
 	@MockBean
 	private JwtUtil jwtUtil;
 	
-//	@Test
-//	public void testGetSavedLocation() throws Exception {
-//		
-//		String uri = STARTING_URI + "/saved_location";
-//		
-//		List<SavedLocation> savedLocations = new ArrayList<>();
-//		savedLocations.add(new SavedLocation(
-//			1,
-//			new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE),
-//			new Location(1, "Seattle", "98101", null)));
-//		savedLocations.add(new SavedLocation(
-//			1,
-//			new User(1, "Conner", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE),
-//			new Location(1, "Chicago", "60007", null)));
-//		
-//		when(service.getAllSavedLocations()).thenReturn(savedLocations);
-//		
-//		mvc.perform(get(uri)
-//			.with(SecurityMockMvcRequestPostProcessors.jwt()))
-//			.andDo(print())
-//			.andExpect(status().isOk())
-//			.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-//			.andExpect(jsonPath("$.length()").value(savedLocations.size()))
-//			.andExpect(jsonPath("$[0].id").value(savedLocations.get(0).getId()))
-//			.andExpect(jsonPath("$[0].user").value(savedLocations.get(0).getUser()))
-//			.andExpect(jsonPath("$[0].location").value(savedLocations.get(0).getLocation()))
-//			.andExpect(jsonPath("$[1].id").value(savedLocations.get(1).getId()))
-//			.andExpect(jsonPath("$[1].user").value(savedLocations.get(1).getUser()))
-//			.andExpect(jsonPath("$[1].location").value(savedLocations.get(1).getLocation()));
-//		
-//		verify(service, times(1)).getAllSavedLocations();
-//		verifyNoMoreInteractions(service);
-//	}
+	@Test
+	public void testGetSavedLocation() throws Exception {
+		
+		String uri = STARTING_URI + "/saved_location";
+		
+		List<SavedLocation> savedLocations = new ArrayList<>();
+		savedLocations.add(new SavedLocation(
+			1,
+			new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE),
+			new Location(1, "Seattle", "98101", null)));
+		savedLocations.add(new SavedLocation(
+			1,
+			new User(1, "Conner", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE),
+			new Location(1, "Chicago", "60007", null)));
+		
+		when(service.getAllSavedLocations()).thenReturn(savedLocations);
+		
+		mvc.perform(get(uri)
+			.with(SecurityMockMvcRequestPostProcessors.jwt()))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+			.andExpect(jsonPath("$.length()").value(savedLocations.size()))
+			.andExpect(jsonPath("$[0].id").value(savedLocations.get(0).getId()))
+			.andExpect(jsonPath("$[0].user").value(savedLocations.get(0).getUser()))
+			.andExpect(jsonPath("$[0].location").value(savedLocations.get(0).getLocation()))
+			.andExpect(jsonPath("$[1].id").value(savedLocations.get(1).getId()))
+			.andExpect(jsonPath("$[1].user").value(savedLocations.get(1).getUser()))
+			.andExpect(jsonPath("$[1].location").value(savedLocations.get(1).getLocation()));
+		
+		verify(service, times(1)).getAllSavedLocations();
+		verifyNoMoreInteractions(service);
+	}
 	
 	@Test
 	public void testGetSavedLocationById() throws Exception {
