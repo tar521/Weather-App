@@ -57,8 +57,6 @@ public class User implements Serializable {
 	@Column(nullable = false)
 	private Tolerance tolerance;
 	
-	
-
 	public User() {
 		super();
 	}

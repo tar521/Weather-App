@@ -24,6 +24,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MockMvc;
 
 import weather_app.controller.SavedLocationController;
+import weather_app.exception.ResourceNotFoundException;
 import weather_app.model.Location;
 import weather_app.model.SavedLocation;
 import weather_app.model.User;
@@ -34,7 +35,7 @@ import weather_app.util.JwtUtil;
 @WebMvcTest(MockitoExtension.class)
 public class SavedLocationControllerTests {
 
-	private static final String STARTING_URI= "http://localhost:8080/api";
+	private static final String STARTING_URI = "http://localhost:8080/api";
 	
 	@Autowired
 	private MockMvc mvc;
@@ -83,5 +84,24 @@ public class SavedLocationControllerTests {
 		
 		verify(service, times(1)).getAllSavedLocations();
 		verifyNoMoreInteractions(service);
+	}
+	
+	@Test
+	public void testGetSavedLocationById() throws Exception {
+		
+		String uri = STARTING_URI + "/saved_location/{id}";
+		
+		int id = 1;
+		SavedLocation savedLocation = new SavedLocation(
+			id,
+			new User(1, "Mitch", "pw123", User.Role.ROLE_USER, true, null, User.Tolerance.MODERATE),
+			new Location(1, "Seattle", "98101", null));
+		
+		when(service.getSavedLocationById(savedLocation.getId())).thenReturn(savedLocation);
+		
+		mvc.perform(get(uri, id)
+			.with(SecurityMockMvcRequestPostProcessors.jwt()))
+			.andDo(print())
+			.andExpect(status().isOk());
 	}
 }

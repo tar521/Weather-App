@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import weather_app.config.AppConfig;
 import weather_app.exception.ResourceNotFoundException;
 import weather_app.exception.UsernameTakenException;
@@ -28,6 +32,7 @@ import weather_app.service.UserService;
 import weather_app.util.JwtUtil;
 
 @RestController
+@Tag(name = "Authentication", description = "The API for managing Authentication")
 public class AuthenticationController {
 
 	// authentication manager -> validates/authenticates user credentials
@@ -49,9 +54,10 @@ public class AuthenticationController {
 	@Autowired
 	JwtUtil jwtUtil;
 	
-	
 	// create the token at http://localhost:8080/authenticate 
 	// send the username & password and try to generate a token as a response
+	@Operation(summary = "Authenticate a user", description = "Authenticates a user based on user credentials")
+	@ApiResponse(responseCode = "201", description = "User authenticated")
 	@PostMapping("/authenticate")
 	public ResponseEntity<?> createJwtToken(@RequestBody AuthenticationRequest request) throws Exception {
 		
@@ -79,6 +85,11 @@ public class AuthenticationController {
 		return ResponseEntity.status(201).body( new AuthenticationResponse(jwt) );
 	}	
 	
+	@Operation(summary = "Register a user by zip code", description = "Creates a saved location based on user's current location")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "User registered"),
+			@ApiResponse(responseCode = "400", description = "Location not found")
+	})
 	@PostMapping("/register/{zipcode}")
 	public ResponseEntity<?> registerUser(@RequestBody User user, @PathVariable String zipcode) throws UsernameTakenException, IOException, ResourceNotFoundException {
 		User created = userService.createUser(user);

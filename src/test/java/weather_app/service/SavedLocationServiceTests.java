@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,7 +62,7 @@ public class SavedLocationServiceTests {
 	}
 	
 	@Test
-	public void testCreateLocationSuccessResourceFound() {
+	public void testCreateLocationSuccessResourceFound() throws Exception {
 		
 		Location location = new Location(1, "Seattle", "98101", null);
 		
@@ -76,7 +77,7 @@ public class SavedLocationServiceTests {
 	}
 	
 	@Test
-	public void testCreateLocationSuccessCreatesLocation() {
+	public void testCreateLocationSuccessCreatesLocation() throws Exception {
 		
 		Location location = new Location(1, "Seattle", "98101", null);
 		

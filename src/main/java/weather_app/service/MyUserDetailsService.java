@@ -8,10 +8,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import weather_app.model.User;
 import weather_app.repository.UserRepository;
 
 @Service
+@Tag(name = "User Details Service", description = "The service for user details business logic")
 public class MyUserDetailsService implements UserDetailsService {
 
 	@Autowired
@@ -24,6 +27,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	// As long as this user is found, User info will be passed to a UserDetails
 	// object and returned
 
+	@Operation(summary = "Load user by username", description = "Loads a user based on username")
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		

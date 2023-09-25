@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import weather_app.exception.ResourceNotFoundException;
 import weather_app.model.Location;
 import weather_app.model.SavedLocation;
@@ -22,6 +24,7 @@ import weather_app.repository.SavedLocationRepository;
 import weather_app.repository.UserRepository;
 
 @Service
+@Tag(name = "Saved Location Service", description = "The service for managing users")
 public class SavedLocationService {
 
 	@Autowired
@@ -36,11 +39,12 @@ public class SavedLocationService {
 	@Autowired
 	Environment env;
 	
+	@Operation(summary = "Get all locations", description = "Returns a list of all locations")
 	public List<Location> getAllLocations() {
 		return locationRepo.findAll();
 	}
 	
-
+	@Operation(summary = "Create a location by zip code", description = "Creates a location based on the zip code")
 	public Location createLocation(String zipcode) throws IOException {
 
 		Optional<Location> found = locationRepo.getLocationByZipcode(zipcode);
@@ -70,11 +74,13 @@ public class SavedLocationService {
 		return null;
 	}
 	
+	@Operation(summary = "Get all saved locations", description = "Returns a list of all saved locations")
 	public List<SavedLocation> getAllSavedLocations() {
 		
 		return repo.findAll();
 	}
 	
+	@Operation(summary = "Get a saved location by id", description = "Returns a saved location based on id")
 	public SavedLocation getSavedLocationById(int id) throws ResourceNotFoundException {
 		
 		Optional<SavedLocation> found = repo.findById(id);
@@ -86,6 +92,7 @@ public class SavedLocationService {
 		return found.get();
 	}
 	
+	@Operation(summary = "Create a saved location", description = "Creates a saved location based on id and current user")
 	public SavedLocation createSavedLocation(User user, int locationId) throws ResourceNotFoundException {
 		
 		Optional<Location> foundLocation = locationRepo.findById(locationId);
@@ -100,10 +107,12 @@ public class SavedLocationService {
 		return test;
 	}
 	
+	@Operation(summary = "Gets all saved locations from a user", description = "Returns a list of saved locations that a user has")
 	public List<SavedLocation> getUserSavedLocations(User user) {
 		return repo.getUserLocations(user.getId());
 	}
 	
+	@Operation(summary = "Delete a saved location", description = "Deletes a saved location based on id")
 	public SavedLocation deleteSavedLocation(int id) throws ResourceNotFoundException {
 		
 		Optional<SavedLocation> deleted = repo.findById(id);

@@ -31,6 +31,7 @@ import weather_app.exception.ResourceNotFoundException;
 import weather_app.exception.UsernameTakenException;
 import weather_app.model.User;
 import weather_app.service.MyUserDetailsService;
+import weather_app.service.SavedLocationService;
 import weather_app.service.UserService;
 import weather_app.util.JwtUtil;
 
@@ -50,6 +51,9 @@ public class UserControllerTests {
 	
 	@MockBean
 	private MyUserDetailsService userDetailService;
+	
+	@MockBean
+	private SavedLocationService savedLocationService;
 	
 	@MockBean
 	private JwtUtil jwtUtil;
