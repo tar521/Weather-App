@@ -44,6 +44,9 @@ public class SecurityConfiguration {
 		
 		http.cors().and().csrf().disable()
 			.authorizeRequests()
+			.antMatchers("/v3/api-docs/**").permitAll()
+			.antMatchers("/openapi.html").permitAll()
+			.antMatchers("/swagger-ui/**").permitAll()
 			.antMatchers("/authenticate").permitAll()	// let anyone try to create a token
 			.antMatchers("/register/**").permitAll()
 			.antMatchers("/test").permitAll()

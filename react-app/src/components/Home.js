@@ -167,11 +167,9 @@ const Home = () => {
             ),
           )}
         </DropdownButton>
-        <Button className='spacing'>No Op!</Button>
+        
         </ButtonGroup>
-        <ButtonGroup className="spacing">
-        <Button className='spacing'>No Op!</Button>
-        </ButtonGroup>
+        
         <Card className="text-center"
         border="success">
           <Card.Header>{dropTitle}</Card.Header>
